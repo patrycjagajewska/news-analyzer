@@ -14,9 +14,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public abstract class Extractor {
@@ -93,9 +91,21 @@ public abstract class Extractor {
                 System.err.printf("Incorrect feed entry format, error: %s\n", e);
                 continue;
             }
-            repository.save(new Feed(uri, title, link, description, publishedDate, content));
+            Set<String> tags = this.getTags(content);
+            repository.save(new Feed(uri, title, link, description, publishedDate, content, tags));
             count++;
         }
         return count;
+    }
+
+    private Set<String> getTags(String text) {
+        Set<String> tags = new HashSet<>();
+        for (String word : text.split(" ")) {
+            word = word.toLowerCase().replaceAll("[,!?]", "");;
+            if (this.dict.containsKey(word)) {
+                tags.add(this.dict.get(word));
+            }
+        }
+        return tags;
     }
 }
