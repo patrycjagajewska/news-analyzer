@@ -16,16 +16,19 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class Extractor {
 
     private FeedRepository repository;
+    private Map<String, String> dict;
     private final String feedUrl;
 
-    public Extractor(String feedUrl, FeedRepository repository) {
+    public Extractor(String feedUrl, FeedRepository repository, Map<String, String> dict) {
         this.feedUrl = feedUrl;
         this.repository = repository;
+        this.dict = dict;
     }
 
     private URL getFeedUrl() throws MalformedURLException {
