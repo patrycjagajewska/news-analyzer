@@ -7,7 +7,6 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class Extractor {
+public abstract class Extractor {
 
     private FeedRepository repository;
     private final String feedUrl;
@@ -33,7 +32,11 @@ public class Extractor {
         return new URL(this.feedUrl);
     }
 
-    public static String extractText(SyndEntry entry) throws IOException {
+    public String getFeedName() {
+        return this.feedUrl;
+    }
+
+    public String extractText(SyndEntry entry) throws IOException {
         URL url = new URL(entry.getLink());
         URLConnection connection = url.openConnection();
         BufferedReader bufferedReader = new BufferedReader(
@@ -48,22 +51,23 @@ public class Extractor {
         bufferedReader.close();
 
         Document doc = Jsoup.parseBodyFragment(buffer.toString());
-        Elements story = doc.getElementsByTag("article"); //TVN
-        return story.text();
+        return this.getContent(doc);
     }
 
-    public void extract() {
+    protected abstract String getContent(Document doc);
+
+    public int extract() {
         System.out.printf("Extracting from %s\n", this.feedUrl);
         SyndFeedInput input;
         XmlReader reader;
-
+        int count = 0;
         try {
             URL feedUrl = this.getFeedUrl();
             input = new SyndFeedInput();
             reader = new XmlReader(feedUrl);
         } catch (IOException e) {
             System.err.printf("Incorrect url: %s, error: %s\n", this.feedUrl, e);
-            return;
+            return count;
         }
 
         SyndFeed feed = null;
@@ -71,7 +75,7 @@ public class Extractor {
             feed = input.build(reader);
         } catch (FeedException e) {
             System.err.printf("Incorrect feed format, error: %s\n", e);
-            return;
+            return count;
         }
         for (SyndEntry entry : (List<SyndEntry>) feed.getEntries()) {
             String uri = entry.getUri();
@@ -87,6 +91,8 @@ public class Extractor {
                 continue;
             }
             repository.save(new Feed(uri, title, link, description, publishedDate, content));
+            count++;
         }
+        return count;
     }
 }

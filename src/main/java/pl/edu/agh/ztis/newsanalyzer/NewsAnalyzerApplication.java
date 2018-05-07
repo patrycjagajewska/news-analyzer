@@ -4,6 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import pl.edu.agh.ztis.newsanalyzer.extractors.BBCExtractor;
+import pl.edu.agh.ztis.newsanalyzer.extractors.TVNExtractor;
+import pl.edu.agh.ztis.newsanalyzer.extractors.WSJExtractor;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -19,13 +25,14 @@ public class NewsAnalyzerApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-        String[] feedUrls = {
-                "http://feeds.bbci.co.uk/news/rss.xml",
-                "http://www.wsj.com/xml/rss/3_7085.xml",
-                "https://www.tvn24.pl/najwazniejsze.xml",
-        };
-        for (String feedUrl : feedUrls) {
-            new Extractor(feedUrl, repository).extract();
+        List<Extractor> extractors = Arrays.asList(
+                new BBCExtractor("http://feeds.bbci.co.uk/news/rss.xml", repository),
+                new WSJExtractor("http://www.wsj.com/xml/rss/3_7085.xml", repository),
+                new TVNExtractor("https://www.tvn24.pl/najwazniejsze.xml", repository));
+        int extractedCount;
+        for (Extractor extractor : extractors) {
+            extractedCount = extractor.extract();
+            System.out.printf("Extracted %d from %s", extractedCount, extractor.getFeedName());
         }
 
         System.out.printf("Repository current count: %d\n", repository.count());
