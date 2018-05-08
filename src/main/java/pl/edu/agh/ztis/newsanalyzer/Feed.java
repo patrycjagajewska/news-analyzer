@@ -11,27 +11,42 @@ public class Feed {
     private String id;
 
     private String title;
+
     private String link;
     private String description;
     private Date publishedDate;
     private String content;
+
     private Set<String> tags;
 
-    public Feed(){}
-
     public Feed(String id, String title, String link, String description,
-                Date publishedDate, String content, Set<String> tags) {
+                Date publishedDate, String content) {
         this.id = id;
         this.title = title;
         this.link = link;
         this.description = description;
         this.publishedDate = publishedDate;
         this.content = content;
-        this.tags = tags;
+        this.tags = null;
     }
-
     @Override
     public String toString() {
         return String.format("Feed[id=%s, title='%s', link='%s', tags='%s']", id, title, link, tags);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 }

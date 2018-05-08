@@ -91,19 +91,25 @@ public abstract class Extractor {
                 System.err.printf("Incorrect feed entry format, error: %s\n", e);
                 continue;
             }
-            Set<String> tags = this.getTags(content);
-            repository.save(new Feed(uri, title, link, description, publishedDate, content, tags));
+            Feed feedObj = new Feed(uri, title, link, description, publishedDate, content);
+            Set<String> tags = this.getTags(feedObj);
+            feedObj.setTags(tags);
+            repository.save(feedObj);
             count++;
         }
         return count;
     }
 
-    private Set<String> getTags(String text) {
+    private Set<String> getTags(Feed feed) {
         Set<String> tags = new HashSet<>();
-        for (String word : text.split(" ")) {
-            word = word.toLowerCase().replaceAll("[,!?]", "");;
-            if (this.dict.containsKey(word)) {
-                tags.add(this.dict.get(word));
+        String[] texts = {feed.getTitle(), feed.getDescription(), feed.getContent()};
+        for (String text : texts) {
+            for (String word : text.split(" ")) {
+                word = word.toLowerCase().replaceAll("[,!?]", "");
+                ;
+                if (this.dict.containsKey(word)) {
+                    tags.add(this.dict.get(word));
+                }
             }
         }
         return tags;
