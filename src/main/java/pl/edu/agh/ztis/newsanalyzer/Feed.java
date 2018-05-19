@@ -16,11 +16,12 @@ public class Feed {
     private String description;
     private Date publishedDate;
     private String content;
+    private Source source;
+    private String channel;
 
     private Set<String> tags;
 
-    public Feed(String id, String title, String link, String description,
-                Date publishedDate, String content) {
+    public Feed(String id, String title, String link, String description, Date publishedDate, String content, Source source, String channel) {
         this.id = id;
         this.title = title;
         this.link = link;
@@ -28,7 +29,10 @@ public class Feed {
         this.publishedDate = publishedDate;
         this.content = content;
         this.tags = null;
+        this.source = source;
+        this.channel = channel;
     }
+  
     @Override
     public String toString() {
         return String.format("Feed[id=%s, title='%s', link='%s', tags='%s']", id, title, link, tags);
