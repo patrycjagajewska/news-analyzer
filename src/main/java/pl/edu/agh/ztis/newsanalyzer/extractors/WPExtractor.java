@@ -5,19 +5,20 @@ import org.jsoup.select.Elements;
 import pl.edu.agh.ztis.newsanalyzer.Extractor;
 import pl.edu.agh.ztis.newsanalyzer.Source;
 
+public class WPExtractor extends Extractor {
 
-public class WSJExtractor extends Extractor {
-
-    public WSJExtractor(String feedUrl, String channel) {
+    public WPExtractor(String feedUrl, String channel) {
         super(feedUrl, channel);
     }
 
+    @Override
     protected String getContent(Document doc) {
-        Elements story = doc.getElementsByClass("wsj-snippet-body");
+        Elements story = doc.getElementsByClass("article--text");
         return story.text();
     }
 
-    public Source getSource(){
-        return Source.WSJ;
+    @Override
+    protected Source getSource() {
+        return Source.WP;
     }
 }

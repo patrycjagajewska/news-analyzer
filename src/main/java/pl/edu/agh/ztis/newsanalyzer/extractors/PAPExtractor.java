@@ -1,23 +1,24 @@
 package pl.edu.agh.ztis.newsanalyzer.extractors;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import org.jsoup.nodes.Element;
 import pl.edu.agh.ztis.newsanalyzer.Extractor;
 import pl.edu.agh.ztis.newsanalyzer.Source;
 
+public class PAPExtractor extends Extractor {
 
-public class WSJExtractor extends Extractor {
-
-    public WSJExtractor(String feedUrl, String channel) {
+    public PAPExtractor(String feedUrl, String channel) {
         super(feedUrl, channel);
     }
 
+    @Override
     protected String getContent(Document doc) {
-        Elements story = doc.getElementsByClass("wsj-snippet-body");
+        Element story = doc.getElementById("depesza");
         return story.text();
     }
 
-    public Source getSource(){
-        return Source.WSJ;
+    @Override
+    protected Source getSource() {
+        return Source.PAP;
     }
 }

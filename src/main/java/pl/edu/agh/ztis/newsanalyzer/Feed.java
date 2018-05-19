@@ -14,16 +14,20 @@ public class Feed {
     private String description;
     private Date publishedDate;
     private String content;
+    private Source source;
+    private String channel;
 
     public Feed(){}
 
-    public Feed(String id, String title, String link, String description, Date publishedDate, String content) {
+    public Feed(String id, String title, String link, String description, Date publishedDate, String content, Source source, String channel) {
         this.id = id;
         this.title = title;
         this.link = link;
         this.description = description;
         this.publishedDate = publishedDate;
         this.content = content;
+        this.source = source;
+        this.channel = channel;
     }
 
     @Override

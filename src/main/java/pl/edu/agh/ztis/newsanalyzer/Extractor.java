@@ -20,21 +20,23 @@ import java.util.List;
 
 public abstract class Extractor {
 
-    private FeedRepository repository;
     private final String feedUrl;
+    private final String channel;
 
-    public Extractor(String feedUrl, FeedRepository repository) {
+    public Extractor(String feedUrl, String channel) {
         this.feedUrl = feedUrl;
-        this.repository = repository;
+        this.channel = channel;
     }
 
     private URL getFeedUrl() throws MalformedURLException {
-        return new URL(this.feedUrl);
+        return new URL(feedUrl);
     }
 
     public String getFeedName() {
-        return this.feedUrl;
+        return feedUrl;
     }
+
+    protected abstract Source getSource();
 
     public String extractText(SyndEntry entry) throws IOException {
         URL url = new URL(entry.getLink());
@@ -51,26 +53,26 @@ public abstract class Extractor {
         bufferedReader.close();
 
         Document doc = Jsoup.parseBodyFragment(buffer.toString());
-        return this.getContent(doc);
+        return getContent(doc);
     }
 
     protected abstract String getContent(Document doc);
 
-    public int extract() {
-        System.out.printf("Extracting from %s\n", this.feedUrl);
+    public int extract(FeedRepository repository) {
+        System.out.printf("Extracting from %s\n", feedUrl);
         SyndFeedInput input;
         XmlReader reader;
+        SyndFeed feed;
+
         int count = 0;
         try {
-            URL feedUrl = this.getFeedUrl();
+            URL feedUrl = getFeedUrl();
             input = new SyndFeedInput();
             reader = new XmlReader(feedUrl);
         } catch (IOException e) {
-            System.err.printf("Incorrect url: %s, error: %s\n", this.feedUrl, e);
+            System.err.printf("Incorrect url: %s, error: %s\n", feedUrl, e);
             return count;
         }
-
-        SyndFeed feed = null;
         try {
             feed = input.build(reader);
         } catch (FeedException e) {
@@ -81,7 +83,7 @@ public abstract class Extractor {
             String uri = entry.getUri();
             String title = entry.getTitle();
             String link = entry.getLink();
-            String description = entry.getDescription().getValue();
+            String description = (entry.getDescription() == null) ? "" : entry.getDescription().getValue() ;
             Date publishedDate = entry.getPublishedDate();
             String content = null;
             try {
@@ -90,7 +92,7 @@ public abstract class Extractor {
                 System.err.printf("Incorrect feed entry format, error: %s\n", e);
                 continue;
             }
-            repository.save(new Feed(uri, title, link, description, publishedDate, content));
+            repository.save(new Feed(uri, title, link, description, publishedDate, content, getSource(), channel));
             count++;
         }
         return count;

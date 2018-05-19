@@ -5,19 +5,20 @@ import org.jsoup.select.Elements;
 import pl.edu.agh.ztis.newsanalyzer.Extractor;
 import pl.edu.agh.ztis.newsanalyzer.Source;
 
+public class NYTExtractor extends Extractor {
 
-public class WSJExtractor extends Extractor {
-
-    public WSJExtractor(String feedUrl, String channel) {
+    public NYTExtractor(String feedUrl, String channel) {
         super(feedUrl, channel);
     }
 
+    @Override
     protected String getContent(Document doc) {
-        Elements story = doc.getElementsByClass("wsj-snippet-body");
+        Elements story = doc.getElementsByClass("storyBodyCompanionColumn");
         return story.text();
     }
 
-    public Source getSource(){
-        return Source.WSJ;
+    @Override
+    protected Source getSource() {
+        return Source.NYT;
     }
 }
