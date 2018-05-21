@@ -29,8 +29,8 @@ public class NewsAnalyzerApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 	    filepath = "./src/main/resources/result_dict_v1-lowercase.csv";
-        DictReader dictReader = new DictReader(filepath);
-        dict = dictReader.read();
+        DictReader dictReader = new DictReader();
+        dict = dictReader.read(filepath);
 
 
         List<Extractor> extractors = Arrays.asList(

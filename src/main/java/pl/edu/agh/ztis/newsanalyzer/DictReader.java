@@ -9,21 +9,16 @@ import java.util.Map;
 
 public class DictReader {
 
-    private String filepath;
     private String delimiter = ",";
 
-    public DictReader(String filepath) {
-        this.filepath = filepath;
-    }
-
-    public Map<String, String> read() {
+    public Map<String, String> read(String filepath) {
         Map<String, String> result = new HashMap<>();
         BufferedReader br = null;
         String line;
 
         try {
 
-            br = new BufferedReader(new FileReader(this.filepath));
+            br = new BufferedReader(new FileReader(filepath));
             while ((line = br.readLine()) != null) {
 
                 // use comma as separator
