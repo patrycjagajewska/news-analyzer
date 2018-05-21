@@ -14,18 +14,19 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 public abstract class Extractor {
 
+    private Map<String, String> dict;
     private final String feedUrl;
     private final String channel;
 
-    public Extractor(String feedUrl, String channel) {
+    public Extractor(String feedUrl, String channel, Map<String, String> dict) {
         this.feedUrl = feedUrl;
         this.channel = channel;
+        this.dict = dict;
     }
 
     private URL getFeedUrl() throws MalformedURLException {
@@ -92,9 +93,28 @@ public abstract class Extractor {
                 System.err.printf("Incorrect feed entry format, error: %s\n", e);
                 continue;
             }
-            repository.save(new Feed(uri, title, link, description, publishedDate, content, getSource(), channel));
+          
+            Feed feedObj = new Feed(uri, title, link, description, publishedDate, content, getSource(), channel);
+            Set<String> tags = this.getTags(feedObj);
+            feedObj.setTags(tags);
+            repository.save(feedObj);
             count++;
         }
         return count;
+    }
+
+    private Set<String> getTags(Feed feed) {
+        Set<String> tags = new HashSet<>();
+        String[] texts = {feed.getTitle(), feed.getDescription(), feed.getContent()};
+        for (String text : texts) {
+            for (String word : text.split(" ")) {
+                word = word.toLowerCase().replaceAll("[,!?]", "");
+                ;
+                if (this.dict.containsKey(word)) {
+                    tags.add(this.dict.get(word));
+                }
+            }
+        }
+        return tags;
     }
 }
