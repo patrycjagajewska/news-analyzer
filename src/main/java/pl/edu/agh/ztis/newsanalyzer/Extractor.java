@@ -106,12 +106,11 @@ public abstract class Extractor {
     private Set<String> getTags(Feed feed) {
         Set<String> tags = new HashSet<>();
         String[] texts = {feed.getTitle(), feed.getDescription(), feed.getContent()};
-        for (String text : texts) {
-            for (String word : text.split(" ")) {
-                word = word.toLowerCase().replaceAll("[,!?]", "");
-                ;
-                if (this.dict.containsKey(word)) {
-                    tags.add(this.dict.get(word));
+        for (String key : this.dict.keySet()) {
+            for (String text : texts) {
+                text = text.toLowerCase().replaceAll("[,!?]", "");
+                if (text.contains(key)) {
+                    tags.add(this.dict.get(key));
                 }
             }
         }
