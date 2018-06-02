@@ -16,7 +16,7 @@ public class TVNExtractor extends Extractor {
 
     protected String getContent(Document doc) {
         Elements story = doc.getElementsByTag("article");
-        if(story == null){
+        if (story == null || !story.hasText()) {
             story = doc.getElementsByClass("content");
         }
         return story.text();

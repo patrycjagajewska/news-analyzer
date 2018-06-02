@@ -16,6 +16,10 @@ public class BBCExtractor extends Extractor {
 
     protected String getContent(Document doc) {
         Elements story = doc.getElementsByClass("story-body");
+        if (story == null || !story.hasText()) {
+            story = doc.getElementsByClass("story-body__inner");
+
+        }
         return story.text();
     }
 
