@@ -17,3 +17,4 @@ def get_tags(lang_dict: dict, feed: dict) -> set:
     texts = [clean(text) for text in texts if text]
     tags = set(lang_dict[key] for key in lang_dict for text in texts if key in text)
     return tags
+
